@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"code.google.com/p/goprotobuf/proto"
 	"math/rand"
+	"io/ioutil"
 )
 
 func CreateEmptySquareBoard(boardSize int32) *BoardState {
@@ -41,7 +42,15 @@ func newHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+func baseHandler(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadFile("index.html")
+	w.Write(body)
+}
+
+
+
 func main() {
 	http.HandleFunc("/new/", newHandler)
+	http.HandleFunc("/", baseHandler)
 	http.ListenAndServe(":8080", nil)
 }
