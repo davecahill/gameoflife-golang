@@ -15,29 +15,62 @@
   <!-- ========= -->
   <!-- Libraries -->
   <!-- ========= -->
+  <script src="https://rawgit.com/dcodeIO/ByteBuffer.js/master/dist/ByteBufferAB.min.js" type="text/javascript"></script>
+  <script src="https://rawgit.com/dcodeIO/ProtoBuf.js/master/dist/ProtoBuf.min.js" type="text/javascript"></script>
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>  
+  
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js" type="text/javascript"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.9/backbone.localStorage-min.js" type="text/javascript"></script>
 
   <!-- =============== -->
   <!-- Javascript code -->
   <!-- =============== -->
   <script type="text/javascript">
+  	//var ProtoBuf = dcodeIO.ProtoBuf;
+/*
+	Backbone.sync = function(method, model, options) {
+		console.log(method);
+		console.log(model);
+		console.log(options);
+	};
+*/
+
+    var BoardModel = Backbone.Model.extend({
+    	urlRoot: '/new/'
+	});
+
     var AppView = Backbone.View.extend({
       // el - stands for element. Every view has a element associate in with HTML content will be rendered.
       el: '#container',
-      // It's the first function called when this view it's instantiated.
+
+      // First function called when view is instantiated.
       initialize: function(){
-        this.render();
+      	this.listenTo(this.model, 'all', this.render);
+      	console.log("listener is set");
       },
+
       // $el - it's a cached jQuery object (el), in which you can use jQuery functions to push content. Like the Hello World in this case.
-      render: function(){
+      render: function(eventName){
+      	console.log(eventName + "triggered, render called");
+      	console.log(this.model);
         this.$el.html("Hello World");
-      }
+      },
+
+      parse: function (response) {
+        
+            console.log(response)
+        
+    }
     });
 
-    var appView = new AppView();
+	var boardModel = new BoardModel();
+    var appView = new AppView({model: boardModel});
+    console.log("about to fetch");
+    boardModel.fetch();
+    console.log("sent fetch");
+
   </script>
 
 </body>
