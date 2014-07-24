@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>Game Of Life (backbone.js, protobufs, golang)</title>
+  <style>
+	.alive {background-color:yellow;}
+	.dead {background-color:black;}
+
+	td,th {
+  	min-width: 3em; /* the normal 'fixed' width */
+  	width: 3em; /* the normal 'fixed' width */
+  	max-width: 3em; /* the normal 'fixed' width, to stop the cells expanding */
+
+  	min-height: 3em; /* the normal 'fixed' width */
+  	height: 3em; /* the normal 'fixed' width */
+  	max-height: 3em; /* the normal 'fixed' width, to stop the cells expanding */  	
+	}
+  </style>
 </head>
 <body>
   <!-- ========= -->
@@ -43,7 +57,23 @@
       // $el - it's a cached jQuery object (el), in which you can use jQuery functions to push content. Like the Hello World in this case.
       render: function(){
       	console.log(this.model);
-        this.$el.html("Hello World");
+      	var states = this.model.attributes.States;
+      	var html = "<table>";
+      	for (var row = 0; row < states.length; row++) {
+      		html += "<tr>";
+      		for (var cell = 0; cell < states[row].length; cell++) {
+      			html += "<td class='";
+      			if (states[row][cell]) {
+      				html += "alive";
+      			} else {
+					html += "dead";
+      			}
+      			html += "''></td>";
+      		}
+      		html += "</tr>";
+    	}
+    	html += "</table>";
+        this.$el.html(html);
       }
     });
 
