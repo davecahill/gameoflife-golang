@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
     "encoding/json"
 	"log"
+	"strings"
+	"strconv"
 )
 
 // Define board and cells
@@ -52,7 +54,9 @@ func createSquareBoard(boardSize int32, cellChooser CellChooser) *BoardState {
 // Web server
 
 func newHandler(w http.ResponseWriter, r *http.Request) {
-	boardState := CreateRandomSquareBoard(4)
+	end := strings.TrimPrefix(r.URL.Path, "/new/")
+	num, err := strconv.ParseInt(end, 10, 32)
+	boardState := CreateRandomSquareBoard(int32(num))
 	data, err := json.Marshal(boardState)
 	if err != nil {
 		log.Fatal(err)
