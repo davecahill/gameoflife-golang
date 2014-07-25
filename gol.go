@@ -24,26 +24,26 @@ type BoardState struct {
 
 type CellChooser func() cellState
 
-func CreateEmptySquareBoard(boardSize int32) *BoardState {
+func CreateEmptySquareBoard(boardSize int) *BoardState {
 	deadCellChooser := CellChooser(func() cellState {
 		return Dead
 	})
 	return createSquareBoard(boardSize, deadCellChooser)
 }
 
-func CreateRandomSquareBoard(boardSize int32) *BoardState {
+func CreateRandomSquareBoard(boardSize int) *BoardState {
 	randomCellChooser := CellChooser(func() cellState {
 		return rand.Int() % 2 == 0
 	})
 	return createSquareBoard(boardSize, randomCellChooser)
 }
 
-func createSquareBoard(boardSize int32, cellChooser CellChooser) *BoardState {
+func createSquareBoard(boardSize int, cellChooser CellChooser) *BoardState {
 	boardState := &BoardState{}
 
-	for i := int32(0); i < boardSize; i++ {
+	for i := 0; i < boardSize; i++ {
 		rowState := []cellState{}
-		for j := int32(0); j < boardSize; j++ {
+		for j := 0; j < boardSize; j++ {
 			rowState = append(rowState, cellChooser())
 		}
 		boardState.States = append(boardState.States, rowState)
@@ -51,17 +51,42 @@ func createSquareBoard(boardSize int32, cellChooser CellChooser) *BoardState {
 	return boardState
 }
 
+// Board stepping
+
+func step(oldBoard *BoardState) error {
+	for i := 0; i < len(oldBoard.States); i++ {
+		for j := 0; j < len(oldBoard.States[i]); j++ {
+			oldBoard.States[i][j] = !oldBoard.States[i][j];
+		}
+	}
+	return nil
+}
+
 // Web server
 
-func newHandler(w http.ResponseWriter, r *http.Request) {
-	end := strings.TrimPrefix(r.URL.Path, "/new/")
-	num, err := strconv.ParseInt(end, 10, 32)
-	boardState := CreateRandomSquareBoard(int32(num))
+func writeBoard(boardState *BoardState, w http.ResponseWriter) {
 	data, err := json.Marshal(boardState)
 	if err != nil {
 		log.Fatal(err)
 	}
 	w.Write(data)
+}
+
+func newHandler(w http.ResponseWriter, r *http.Request) {
+
+	switch {
+	case r.Method == "POST":
+		body, _ := ioutil.ReadAll(r.Body)
+		boardState := &BoardState{}
+		json.Unmarshal(body, boardState)
+		step(boardState)
+		writeBoard(boardState, w)
+	case r.Method == "GET":
+		end := strings.TrimPrefix(r.URL.Path, "/new/")
+		num, _ := strconv.Atoi(end)
+		boardState := CreateRandomSquareBoard(num)
+		writeBoard(boardState, w)
+	}
 }
 
 func baseHandler(w http.ResponseWriter, r *http.Request) {

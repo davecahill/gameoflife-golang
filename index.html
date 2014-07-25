@@ -40,6 +40,15 @@
   <!-- =============== -->
   <script type="text/javascript">
 
+	function sleep(milliseconds) {
+	  var start = new Date().getTime();
+	  for (var i = 0; i < 1e7; i++) {
+	    if ((new Date().getTime() - start) > milliseconds){
+	      break;
+	    }
+	  }
+	}
+
     var BoardModel = Backbone.Model.extend({
     	urlRoot: '/new/10'
 	});
@@ -74,6 +83,8 @@
     	}
     	html += "</table>";
         this.$el.html(html);
+        sleep(1000);
+        this.model.save();
       }
     });
 
