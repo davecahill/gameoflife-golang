@@ -6,10 +6,18 @@ import (
 	"strings"
 	"errors"
 	"fmt"
+	"reflect"
 )
 
-func TestStep(t *testing.T) {
-	testTransition("middleDot", t)
+func TestAllBoards(t *testing.T) {
+	files, err := ioutil.ReadDir("test_boards")
+	if err != nil {
+		t.Error("Error loading test boards")
+	}
+	for _, file := range files {
+		println(fmt.Sprintf("Testing %s", file.Name()))
+		testTransition(file.Name(), t)
+	}
 }
 
 func testTransition(boardName string, t *testing.T) {
@@ -18,15 +26,19 @@ func testTransition(boardName string, t *testing.T) {
 		t.Error(err)
 	}
 
-	Step(before)
+	actualAfter := Step(before)
 
-	if before != expectedAfter {
-		t.Error(fmt.Sprintf("Stepping the board did not produce the expected outcome.\nActual:\n%s\nExpected:\n%s", BoardToString(before), BoardToString(expectedAfter)))
+	if !reflect.DeepEqual(actualAfter, expectedAfter) {
+		t.Error(fmt.Sprintf("Stepping the board did not produce the expected outcome.\nExpected:\n%s\nActual:\n%s", BoardToString(expectedAfter), BoardToString(actualAfter)))
 	}
 }
 
 func readBoards(boardName string) (*BoardState, *BoardState, error) {
-	body, _ := ioutil.ReadFile("test_boards/" + boardName +  ".board")
+	body, err := ioutil.ReadFile("test_boards/" + boardName)
+	if (err != nil) {
+		return nil, nil, errors.New(fmt.Sprintf("Error loading board: %s", boardName))
+	}
+
 	lines := strings.Split(string(body), "\n")
 
 	// Number of lines should be uneven - x rows for board one, one empty middle row,
