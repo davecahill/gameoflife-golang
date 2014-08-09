@@ -18,6 +18,8 @@ func writeBoard(boardState *BoardState, w http.ResponseWriter) {
 }
 
 func newHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 	switch {
 	case r.Method == "POST":
 		body, _ := ioutil.ReadAll(r.Body)
