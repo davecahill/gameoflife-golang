@@ -35,7 +35,25 @@ func newHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func infoHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	switch {
+	case r.Method == "GET":
+		serverInfo := &ServerInfo{}
+		serverInfo.ServerName = "Dave's GOLang Game Of Life server"
+		serverInfo.LiveColor = "black"
+		serverInfo.DeadColor = "white"
+		data, err := json.Marshal(serverInfo)
+		if err != nil {
+			log.Fatal(err)
+		}
+		w.Write(data)
+	}
+}
+
 func main() {
 	http.HandleFunc("/new/", newHandler)
+	http.HandleFunc("/info/", infoHandler)
 	http.ListenAndServe(":8080", nil)
 }
