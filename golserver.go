@@ -42,7 +42,7 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 	case r.Method == "GET":
 		serverInfo := &ServerInfo{}
 		serverInfo.ServerName = "Dave's GOLang Game Of Life server"
-		serverInfo.LiveColor = "black"
+		serverInfo.LiveColor = "green"
 		serverInfo.DeadColor = "white"
 		data, err := json.Marshal(serverInfo)
 		if err != nil {
