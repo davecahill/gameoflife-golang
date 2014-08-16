@@ -41,7 +41,9 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == "GET":
 		serverInfo := &ServerInfo{}
-		serverInfo.ServerName = "Dave's GOLang Game Of Life server"
+		serverInfo.Author = "Dave Cahill"
+		serverInfo.Language = "go"
+		serverInfo.SourceCodeURL = "https://github.com/davecahill/gameoflife-golang"
 		serverInfo.LiveColor = "green"
 		serverInfo.DeadColor = "white"
 		data, err := json.Marshal(serverInfo)

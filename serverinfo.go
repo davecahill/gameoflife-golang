@@ -3,7 +3,9 @@ package main
 // Define server info
 
 type ServerInfo struct {
-	ServerName string
+	Author string
+	Language string
+	SourceCodeURL string
 	LiveColor string
 	DeadColor string
 }
