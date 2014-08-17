@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"log"
-	"strings"
-	"strconv"
 )
 
 func writeBoard(boardState *BoardState, w http.ResponseWriter) {
@@ -17,7 +15,7 @@ func writeBoard(boardState *BoardState, w http.ResponseWriter) {
 	w.Write(data)
 }
 
-func newHandler(w http.ResponseWriter, r *http.Request) {
+func stepHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 	switch {
@@ -27,11 +25,6 @@ func newHandler(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal(body, boardState)
 		newBoardState := Step(boardState)
 		writeBoard(newBoardState, w)
-	case r.Method == "GET":
-		end := strings.TrimPrefix(r.URL.Path, "/new/")
-		num, _ := strconv.Atoi(end)
-		boardState := CreateRandomSquareBoard(num)
-		writeBoard(boardState, w)
 	}
 }
 
@@ -55,7 +48,7 @@ func infoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/new/", newHandler)
+	http.HandleFunc("/step/", stepHandler)
 	http.HandleFunc("/info/", infoHandler)
 	http.ListenAndServe(":8080", nil)
 }
